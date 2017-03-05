@@ -31,10 +31,9 @@ class ScriptClassUtil {
 		}
 		
 		return table;
-	}
-	
-	static function printError(functionName:String, e:Dynamic) {
-		trace('$CLASS_NAME.$functionName(): $e');
+		
+		function printError(functionName:String, e:Dynamic)
+			trace('$CLASS_NAME.$functionName(): $e');
 	}
 	
 	public static function classExtends(baseClass:Dynamic, ?body:Dynamic):Dynamic {
