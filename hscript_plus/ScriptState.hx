@@ -25,17 +25,17 @@ class ScriptState {
 		_parser = new Parser();
 		
 		_interp = new Interp();
-		setVariable('${ScriptClassUtil.CLASS_NAME}', ScriptClassUtil);
+		set('${ScriptClassUtil.CLASS_NAME}', ScriptClassUtil);
 		_parser.allowTypes = true;
 		
 		_classes = new Map<String, Dynamic>();
 	}
 	
-	public inline function getVariable(name:String):Dynamic {
+	public inline function get(name:String):Dynamic {
 		return _interp.variables.get(name);
 	}
 	
-	public inline function setVariable(name:String, ref:Dynamic) {
+	public inline function set(name:String, ref:Dynamic) {
 		_interp.variables.set(name, ref);
 	}
 	
@@ -48,7 +48,7 @@ class ScriptState {
 		try {
 			_interp.execute(program);
 			// automatically call main()
-			var main = getVariable("main");
+			var main = get("main");
 			try {
 				if (Reflect.isFunction(main))
 					main();
@@ -109,7 +109,7 @@ class ScriptState {
 			var moduleName = pathComponents[pathComponents.length - 1];
 			moduleName = moduleName.substr(0, moduleName.length - 3); // removes the ".hx"
 			var packageName = _preprocessor.packageName;
-			var value = getVariable(className);
+			var value = get(className);
 			if (className != moduleName)
 				moduleName += '.$className';
 			var key = '$packageName.$moduleName';
@@ -135,7 +135,7 @@ class ScriptState {
 				}
 			}
 			
-			setVariable(className, classType);
+			set(className, classType);
 		}
 		return true;
 	}
