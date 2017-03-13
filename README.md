@@ -8,15 +8,19 @@ Adds class to [hscript](https://github.com/HaxeFoundation/hscript) through the u
 haxelib git hscript-plus https://github.com/DleanJeans/hscript-plus/
 ```
 
-### Dependencies
-#### hscript
-##### Installing
+### hscript
+#### Installing
 ```
 haxelib install hscript
 ```
 
-##### Document
+#### Document
 Go read hscript's [README](https://github.com/HaxeFoundation/hscript/blob/master/README.md)
+
+#### hscript's limitations
+- No wildcard importing
+- No string interpolation
+- No default variable value
 
 ## Features
 Improved from hscript
@@ -76,8 +80,6 @@ There are 4 classes in `hscript-plus`
 
 ## Limitations
 - You need to access class members from `this` 
-- No wildcard importing
-- No string interpolation
 
 ## Todos
 - [ ] Unit tests
