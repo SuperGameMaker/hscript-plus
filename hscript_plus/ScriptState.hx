@@ -3,7 +3,6 @@ package hscript_plus;
 import hscript.Expr;
 import hscript.Interp;
 import hscript.Parser;
-import openfl.Assets;
 
 using StringTools;
 
@@ -23,81 +22,48 @@ class ScriptState {
 		_preprocessor = new ScriptPreprocessor();
 		
 		_parser = new Parser();
-		
-		_interp = new Interp();
-		set('${ScriptClassUtil.CLASS_NAME}', ScriptClassUtil);
 		_parser.allowTypes = true;
 		
+		_interp = new Interp();
+		
 		_classes = new Map<String, Dynamic>();
+
+		setClassUtilFunctions();
+	}
+
+	function setClassUtilFunctions() {
+		var c = ScriptClassUtil;
+		set(c.create_FUNC_NAME, c.create);
+		set(c.classExtends_FUNC_NAME, c.classExtends);
 	}
 	
 	public inline function get(name:String):Dynamic {
 		return _interp.variables.get(name);
 	}
 	
-	public inline function set(name:String, ref:Dynamic) {
+ 	public inline function set(name:String, ref:Dynamic) {
 		_interp.variables.set(name, ref);
 	}
-	
-	public function executeString(script:String) {
-		var program = tryParseScript(script);
-		tryExecuteProgram(program);
-	}
-	
-	function tryExecuteProgram(program:Expr, path:String = ""):Bool {
-		try {
-			_interp.execute(program);
-			// automatically call main()
-			var main = get("main");
-			try {
-				if (Reflect.isFunction(main))
-					main();
-				else if (main != null) throw "$CLASS_NAME.tryExecuteProgram(): main is not a function";
-			}
-			catch (e:Dynamic) {
-				if (path != "")
-					path += ":";
-				var error = '$CLASS_NAME.tryExecuteProgram(): $path Failed to execute main(): ' + 
-					e;
-				trace(error);
-				return false;
-			}
-		}
-		catch (e:Dynamic) {
-			var error = '$CLASS_NAME.tryExecuteProgram(): ' +
-				#if hscriptPos 'characters ${e.pmin} - ${e.pmax} : ${e.e}'
-				#else e #end;
-			trace(error);
-			return false;
-		}
-		return true;
-	}
-	
-	function tryParseScript(script:String):Null<Expr> {
-		var program:Expr;
-		try {
-			program = _parser.parseString(script);
-		}
-		catch (e:Dynamic) {
-			var line = _parser.line;
-			trace('$CLASS_NAME.tryParseScript(): line $line: ' + #if hscriptPos 'characters ${e.pmin} - ${e.pmax} : ${e.e}' #else e #end);
-			return null;
-		}
-		return program;
-	}
-	
+
 	public function executeFile(path:String) {
+		var script = sys.io.File.getContent(path);
+		execute(script, path);
+	}
+	
+	public inline function executeString(script:String) {
+		execute(script);
+	}
+
+	function execute(script:String, ?path:String = "") {
 		var
-		script = Assets.getText(path),
 		program:Expr,
 		imports:Array<String>;
 		
 		script = _preprocessor.process(script);
+		this.script += script;
 		
 		program = tryParseScript(script);
 		imports = _preprocessor.imports;
-		
-		this.script += script;
 		
 		if (program == null ||
 			!importClasses(imports, path) || // importing class fails
@@ -119,7 +85,7 @@ class ScriptState {
 		return true;
 	}
 	
-	function importClasses(imports:Array<String>, path:String) {
+	function importClasses(imports:Array<String>, ?path:String) {
 		for (typePath in imports) {
 			var lastDotIndex = typePath.lastIndexOf(".");
 			var className = typePath.substr(lastDotIndex + 1);
@@ -130,7 +96,9 @@ class ScriptState {
 				executeFile('assets/$pathName.hx');
 				classType = _classes.get(typePath);
 				if (classType == null) {
-					trace('$CLASS_NAME.importClasses(): $path: $className not found');
+					if (path != null)
+						path = ' $path:';
+					trace('$CLASS_NAME.importClasses():$path $className not found');
 					return false;
 				}
 			}
@@ -140,4 +108,47 @@ class ScriptState {
 		return true;
 	}
 	
+	function tryExecuteProgram(program:Expr, path:String = ""):Bool {
+		try {
+			_interp.execute(program);
+			// automatically call main()
+			var main = get("main");
+			try {
+				if (Reflect.isFunction(main))
+					main();
+				else if (main != null) throw 'tryExecuteProgram(): main is not a function';
+			}
+			catch (e:Dynamic) {
+				if (path != "")
+					path += ":";
+				var error = 'tryExecuteProgram(): $path Failed to execute main(): ' + 
+					e;
+				trace(error);
+				return false;
+			}
+		}
+		catch (e:Dynamic) {
+			var error = 'tryExecuteProgram(): ' +
+				#if hscriptPos 'characters ${e.pmin} - ${e.pmax} : ${e.e}'
+				#else e #end;
+			trace(error);
+			trace(this.script);
+			return false;
+		}
+		return true;
+	}
+	
+	function tryParseScript(script:String):Null<Expr> {
+		var program:Expr;
+		try {
+			program = _parser.parseString(script);
+		}
+		catch (e:Dynamic) {
+			var line = _parser.line;
+			trace('tryParseScript(): line $line: ' + #if hscriptPos 'characters ${e.pmin} - ${e.pmax} : ${e.e}' #else e #end);
+			trace(script);
+			return null;
+		}
+		return program;
+	}
 }

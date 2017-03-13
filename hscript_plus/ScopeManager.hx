@@ -3,11 +3,7 @@ package hscript_plus;
 @:forward(name, type, fields, parent, child)
 abstract ScopeManager(Scope) {
 	public function new() {
-		this = new Scope("TOP");
-	}
-	
-	public function isTopScope() {
-		return this.name == "TOP";
+		this = new Scope("", ROOT_SCOPE);
 	}
 	
 	public inline function openScope(name:String = "", ?type:ScopeType):Scope {
@@ -42,6 +38,7 @@ class Scope {
 }
 
 enum ScopeType {
+	ROOT_SCOPE;
 	CLASS_SCOPE;
 	FUNCTION_SCOPE;
 	ANONYMOUS_SCOPE;

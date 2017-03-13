@@ -1,8 +1,7 @@
 package hscript_plus;
 
 import hscript_plus.ScopeManager;
-
-using StringTools;
+import hscript_plus.ScriptClassUtil;
 
 typedef ScriptClass = {
 	name:String,
@@ -17,8 +16,9 @@ class ScriptPreprocessor {
 	 * I recommend this website to write regular expressions
 	 * http://regexr.com/
 	 */
-	public static var importRegex:EReg = ~/import\s+([^;]+);/g;
+
 	public static var packageRegex:EReg = ~/package\s?([^;]+)?;/g;
+	public static var importRegex:EReg = ~/import\s+([^;]+);/g;
 	public static var classRegex:EReg = ~/class\s+(\w+)(?:\s+extends\s+(\w+))?\s*({?)/g;
 	public static var superRegex:EReg = ~/super(?:\.(\w+))?\((.*)\);/g;
 	public static var constructorCallRegex:EReg = ~/new\s+(\w+)\s*\((.*)\)/g;
@@ -54,19 +54,21 @@ class ScriptPreprocessor {
 				lines[index] = "";
 			}
 			// if line starts with `import`
-			else if (importRegex.match(line)) {
+			if (importRegex.match(line)) {
 				imports.push(importRegex.matched(1));
 				lines[index] = "";
 			}
 			// if line starts with `class`
-			else if (classRegex.match(line)) {
+			if (classRegex.match(line)) {
 				className = classRegex.matched(1);
 				var baseClass = classRegex.matched(2);
 				var bracket = classRegex.matched(3);
+
+				var classExtendingFuncName = ScriptClassUtil.classExtends_FUNC_NAME;
 				var processed = '$className = ' +
 					if (baseClass == null)
 						'{};';
-					else '${ScriptClassUtil.CLASS_NAME}.classExtends($baseClass);';
+					else '$classExtendingFuncName($baseClass);';
 				
 				processed += ' $bracket';// + 'setVariable("$className", $className);';
 				lines[index] = classRegex.replace(line, processed);
@@ -75,29 +77,33 @@ class ScriptPreprocessor {
 				scopeType = CLASS_SCOPE;
 				classes.push(className);
 			}
-			else if (superRegex.match(line)) {
+
+			if (superRegex.match(line)) {
 				var superFunction = superRegex.matched(1);
 				var args = superRegex.matched(2);
 				
 				if (superFunction == null)
 					superFunction = "new";
+				if (args != "")
+					args = ', $args';
 				
-				lines[index] = superRegex.replace(line, '$className.__superClass.$superFunction(this, $args);');
+				lines[index] = superRegex.replace(line, '$className.__superClass.$superFunction(this$args);');
 			}
 			// if line has `new ClassName(..)`
-			else if (constructorCallRegex.match(line)) {
+			if (constructorCallRegex.match(line)) {
 				className = constructorCallRegex.matched(1);
 				var args = constructorCallRegex.matched(2);
-				
+				var objectCreatorFuncName = ScriptClassUtil.create_FUNC_NAME;
+
 				lines[index] = constructorCallRegex.replace(line, 
-				'${ScriptClassUtil.CLASS_NAME}.create($className, [$args])');
+				'$objectCreatorFuncName($className, [$args])');
 			}
-			// if line has a public or static or public static function
+			// if line function declaration
 			/**
 			* Removes access modifier
 			* https://haxe.org/manual/class-field-access-modifier.html
 			*/
-			else if (functionRegex.match(line)) {				
+			if (functionRegex.match(line)) {
 				var isOverriden = functionRegex.matched(1) != null;
 				var isPublic = functionRegex.matched(2) == "public";
 				var isStatic = functionRegex.matched(3) != null;
@@ -106,22 +112,36 @@ class ScriptPreprocessor {
 				var params = functionRegex.matched(6);
 				var bracket = functionRegex.matched(7);
 				
+				if (bracket == null)
+					bracket = "";
+				
 				var classFunctionAssign = "";
 				
 				scopeName = funcName;
 				scopeType = FUNCTION_SCOPE;
-				
-				// stop here if function is outside of class or inside another function
-				if (!scope.isTopScope() && scope.type == CLASS_SCOPE && !isStatic) {
-					// comma trailing `this` parameter
-					var comma = params != "" ? ", " : "";
-					// add `this` as the first parameter
-					params = 'this:Dynamic$comma' + params;
+
+				if (scope.type == CLASS_SCOPE) {
 					classFunctionAssign = '$className.$funcName =';
+					if (!isStatic) {
+						// comma trailing `this` parameter
+						var comma = params != "" ? ", " : "";
+						// add `this` as the first parameter
+						params = 'this$comma' + params;
+					}
 				}
-				lines[index] = functionRegex.replace(line, '$classFunctionAssign function $funcName($params) $bracket');
+
+				// if function is in a root scope, or does not belong to any class
+				if (scope.type == ROOT_SCOPE || funcName == "main") {
+					funcName = ' $funcName';
+				}
+				else {
+					funcName = "";
+				}
+
+				lines[index] = functionRegex.replace(line, '$classFunctionAssign function$funcName($params) $bracket');
 			}
-			else if (varRegex.match(line)) {
+
+			if (varRegex.match(line)) {
 				var isPublic = varRegex.matched(1) == "public";
 				var isStatic = varRegex.matched(2) != null;
 				var isInline = varRegex.matched(3) != null;

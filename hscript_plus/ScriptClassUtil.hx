@@ -2,8 +2,13 @@ package hscript_plus;
 
 class ScriptClassUtil {
 	public static var CLASS_NAME = Type.getClassName(ScriptClassUtil).split(".")[1];
-	
+	public static var create_FUNC_NAME = "create";
+	public static var classExtends_FUNC_NAME = "classExtends";
+
 	public static function create(baseClass:Dynamic, ?constructorArgs:Array<Dynamic>):Dynamic {
+		function printError(functionName:String, e:Dynamic)
+			trace('$CLASS_NAME.$functionName(): $e');
+
 		var table = Reflect.copy(baseClass);
 		
 		for (fieldName in Reflect.fields(table)) {
@@ -31,9 +36,6 @@ class ScriptClassUtil {
 		}
 		
 		return table;
-		
-		function printError(functionName:String, e:Dynamic)
-			trace('$CLASS_NAME.$functionName(): $e');
 	}
 	
 	public static function classExtends(baseClass:Dynamic, ?body:Dynamic):Dynamic {
