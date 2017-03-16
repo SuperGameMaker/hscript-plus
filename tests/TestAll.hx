@@ -1,12 +1,10 @@
-import hscript_plus.*;
-
 import utest.Runner;
 import utest.ui.Report;
-import utest.Assert;
-import utest.TestResult;
 
+import cases.ScriptClassUtilTest;
 import cases.ScriptPreprocessorTest;
 import cases.ScriptStateTest;
+import cases.ScopeManagerTest;
 
 class TestAll  {
 	public static function main() {
@@ -19,8 +17,10 @@ class TestAll  {
 	}
 
 	static function addTests(runner:Runner) {
+		runner.addCase(new ScriptClassUtilTest());
 		runner.addCase(new ScriptStateTest());
 		runner.addCase(new ScriptPreprocessorTest());
+		runner.addCase(new ScopeManagerTest());
 	}
 	
 }
