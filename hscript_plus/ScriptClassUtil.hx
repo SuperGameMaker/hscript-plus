@@ -5,10 +5,11 @@ class ScriptClassUtil {
 	public static var create_FUNC_NAME = "create";
 	public static var classExtends_FUNC_NAME = "classExtends";
 
-	public static function create(baseClass:Dynamic, ?constructorArgs:Array<Dynamic>):Dynamic {
-		function printError(functionName:String, e:Dynamic)
-			trace('$CLASS_NAME.$functionName(): $e');
-
+	public static function create(baseClass:Dynamic, ?args:Array<Dynamic>):Dynamic {
+		inline function printError(e:Dynamic)
+			throw('$CLASS_NAME.create: $e');
+		
+		if (args == null) args = [];
 		var table = Reflect.copy(baseClass);
 		
 		for (fieldName in Reflect.fields(table)) {
@@ -18,11 +19,11 @@ class ScriptClassUtil {
 			// call `new()`
 			if (fieldName == "new") {
 				try {
-					Reflect.callMethod(table, field, [table].concat(constructorArgs));
+					Reflect.callMethod(table, field, [table].concat(args));
 					continue;
 				}
 				catch (e:Dynamic) {
-					printError("create", e);
+					printError(e);
 				}
 			}
 			
@@ -31,7 +32,7 @@ class ScriptClassUtil {
 				Reflect.setField(table, fieldName, Reflect.makeVarArgs(bindedMethod));
 			}
 			catch (e:Dynamic) {
-				printError("create", e);
+				printError(e);
 			}
 		}
 		
