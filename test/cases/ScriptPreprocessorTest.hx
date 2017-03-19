@@ -173,10 +173,10 @@ class ScriptPreprocessorTest {
         var script = "
         class Object {
             public static function main()
-                var name = 'Rock';
+                createObject();
         }
         ";
-        var expected = "var name = 'Rock';";
+        var expected = "createObject();";
         var value = processScript(script, 3);
 
         Assert.equals(expected, value);

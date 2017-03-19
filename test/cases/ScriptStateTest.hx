@@ -25,6 +25,8 @@ class ScriptStateTest {
         state.executeString(script);
         var object = state.get("object");
         Assert.equals(10, object.mass);
+        trace(state.script);
+        trace(state.program);
     }
 
     public function testMainFunctionInClassCalled() {
