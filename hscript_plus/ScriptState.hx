@@ -9,7 +9,7 @@ using StringTools;
 class ScriptState {
 	public static var CLASS_NAME = Type.getClassName(ScriptState).split(".")[1];
 	
-	var _preprocessor:ScriptPreprocessor;
+	var _preprocessor:ScriptCompiler;
 	var _parser:Parser;
 	var _interp:Interp;
 	
@@ -17,9 +17,10 @@ class ScriptState {
 	var _classes:Map<String, Dynamic>;
 	
 	public var script:String = "";
+	public var program:#if hscriptPos ExprDef #else Expr #end;
 
 	public function new() {
-		_preprocessor = new ScriptPreprocessor();
+		_preprocessor = new ScriptCompiler();
 		
 		_parser = new Parser();
 		_parser.allowTypes = true;
@@ -60,10 +61,12 @@ class ScriptState {
 		imports:Array<String>;
 		
 		script = _preprocessor.process(script);
-		this.script += script;
 		
 		program = tryParseScript(script);
 		imports = _preprocessor.imports;
+
+		this.script += script;
+		this.program = program;
 		
 		if (program == null ||
 			!importClasses(imports, path) || // importing class fails

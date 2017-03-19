@@ -73,8 +73,8 @@ Object.main();
 There are 4 classes in `hscript-plus`
 - [`hscript_plus.ScriptState`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptState.hx): executes scripts and stores global variables in them
 - [`hscript_plus.ScriptClassUtil`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptClassUtil.hx): has two static functions `create()` and `classExtends()` for creating new object and new child class, respectively
-- [`hscript_plus.ScriptPreprocessor`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptPreprocessor.hx): processes the scripts before getting executed
-- [`hscript_plus.ScopeManager`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScopeManager.hx): used in `ScriptPreprocessor` to store fields in class or function scopes
+- [`hscript_plus.ScriptCompiler`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptCompiler.hx): processes the scripts before getting executed
+- [`hscript_plus.ScopeManager`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScopeManager.hx): used in `ScriptCompiler` to store fields in class or function scopes
 
 (more details soon)
 

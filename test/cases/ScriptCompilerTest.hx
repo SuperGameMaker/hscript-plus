@@ -1,14 +1,14 @@
 package cases;
 
 import utest.Assert;
-import hscript_plus.ScriptPreprocessor;
+import hscript_plus.ScriptCompiler;
 
 using StringTools;
 
-class ScriptPreprocessorTest {
-    public static var NEWLINE = ScriptPreprocessor.NEWLINE;
+class ScriptCompilerTest {
+    public static var NEWLINE = ScriptCompiler.NEWLINE;
 
-    var processor:ScriptPreprocessor;
+    var processor:ScriptCompiler;
 
     var script:String;
     var expected:String;
@@ -17,7 +17,7 @@ class ScriptPreprocessorTest {
     public function new() {}
 
     public function setup() {
-        processor = new ScriptPreprocessor();
+        processor = new ScriptCompiler();
         script = "";
         expected = "";
         value = "";

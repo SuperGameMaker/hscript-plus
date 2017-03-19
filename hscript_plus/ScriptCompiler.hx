@@ -1,7 +1,6 @@
 package hscript_plus;
 
 import hscript_plus.ScopeManager;
-import hscript_plus.ScriptClassUtil;
 
 typedef ScriptClass = {
 	name:String,
@@ -9,13 +8,9 @@ typedef ScriptClass = {
 	statics:Array<String>
 }
 
-class ScriptPreprocessor {
+class ScriptCompiler {
 	public static inline var NEWLINE = #if windows "\r\n" #else "\n" #end;
 	
-	/**
-	 * I recommend this website to write regular expressions
-	 * http://regexr.com/
-	 */
 	public static var packageRegex:EReg = ~/package\s?([^;]+)?;/g;
 	public static var importRegex:EReg = ~/import\s+([^;]+);/g;
 	public static var classRegex:EReg = ~/class\s+(\w+)(?:\s+extends\s+(\w+))?\s*({?)/g;
@@ -179,6 +174,7 @@ class ScriptPreprocessor {
 		compiled = functionRegex.replace(line, compiled);
 
 		setCurrentLine(compiled);
+		
 	}
 	
 	function compileVar(regex:EReg) {
