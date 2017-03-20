@@ -47,6 +47,12 @@ class ScriptClassUtil {
 			for (fieldName in Reflect.fields(body))
 				Reflect.setField(newClass, fieldName, Reflect.field(body, fieldName));
 		
+		var statics:Array<String> = baseClass.__statics;
+		if (statics != null) {
+			for (field in statics)
+				Reflect.deleteField(newClass, field);
+		}
+		
 		return newClass;
 	}
 }
