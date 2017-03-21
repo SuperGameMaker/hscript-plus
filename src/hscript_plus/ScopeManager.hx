@@ -12,26 +12,22 @@ class ScopeManager {
 	var _scope:Scope;
 
 	public function new() {
-		_scope = new Scope("", ROOT_SCOPE);
+		_scope = new Scope(ROOT_SCOPE, "");
 	}
 
-	public inline function isRoot() return type == ROOT_SCOPE;
-	public inline function isInClass() return type == CLASS_SCOPE;
-	public inline function isInFunction() return type == FUNCTION_SCOPE;
-	public function isAnonymous() return type == ANONYMOUS_SCOPE;
+	public inline function isRoot() return _scope.isRoot();
+	public inline function isInClass() return _scope.isInClass();
+	public inline function isInFunction() return _scope.isInFunction();
+	public function isAnonymous() return _scope.isAnonymous();
 
-	public inline function parentIs(scope:Scope):Bool return scope == parent;
-	public inline function childIs(scope:Scope):Bool return scope == child;
+	public inline function parentIs(scope:Scope):Bool return _scope.parentIs(scope);
+	public inline function childIs(scope:Scope):Bool return _scope.childIs(scope);
 
-	public inline function addField(name:String):Bool {
-		if (hasField(name)) return false; 
-		fields.push(name);
-		return true;
-	}
-	public inline function hasField(name:String):Bool return fields.indexOf(name) > -1;
+	public inline function addField(name:String):Bool return _scope.addField(name);
+	public inline function hasField(name:String):Bool return _scope.hasField(name);
 	
-	public inline function openScope(?name:String = "", ?type:ScopeType):Scope {
-		var childScope = new Scope(name, type);
+	public inline function openScope(?type:ScopeType, ?name:String = ""):Scope {
+		var childScope = new Scope(type, name);
 		
 		childScope.parent = _scope;
 		_scope.child = childScope;
@@ -53,12 +49,27 @@ class Scope {
 	public var parent:Scope;
 	public var child:Scope;
 	
-	public function new(name:String, ?type:ScopeType) {
+	public function new(?type:ScopeType, name:String) {
 		if (type == null) type = ANONYMOUS_SCOPE;
 		
 		this.name = name;
 		this.type = type;
 	}
+
+	public inline function isRoot() return type == ROOT_SCOPE;
+	public inline function isInClass() return type == CLASS_SCOPE;
+	public inline function isInFunction() return type == FUNCTION_SCOPE;
+	public inline function isAnonymous() return type == ANONYMOUS_SCOPE;
+
+	public inline function parentIs(scope:Scope):Bool return scope == parent;
+	public inline function childIs(scope:Scope):Bool return scope == child;
+
+	public inline function addField(name:String):Bool {
+		if (hasField(name)) return false; 
+		fields.push(name);
+		return true;
+	}
+	public inline function hasField(name:String):Bool return fields.indexOf(name) > -1;
 }
 
 enum ScopeType {

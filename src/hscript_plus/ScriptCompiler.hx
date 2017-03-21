@@ -202,7 +202,7 @@ class ScriptCompiler {
 
 		do {
 			if (bracket == "{")
-				scope.openScope(scopeName, scopeType);
+				scope.openScope(scopeType, scopeName);
 			else if (bracket == "}")
 				scope.closeScope();
 			
