@@ -1,6 +1,8 @@
 package hscript_plus;
 
-@:build(hscript_plus.AbstractMacro.buildGetSetters())
+typedef Record = Array<Scope>;
+
+@:build(hscript_plus.macro.GetSetterMacro.build())
 class ScopeManager {
 	public var name(get, set):String;
 	public var type(get, set):ScopeType;
@@ -9,7 +11,13 @@ class ScopeManager {
 	public var parent(get, set):Scope;
 	public var child(get, set):Scope;
 
-	var _scope:Scope;
+	public var record(default, null):Record = [];
+
+	var _scope(default, set__scope):Scope; function set__scope(newScope:Scope) {
+		_scope = newScope;
+		record.push(newScope);
+		return newScope;
+	}
 
 	public function new() {
 		_scope = new Scope(ROOT_SCOPE, "");
