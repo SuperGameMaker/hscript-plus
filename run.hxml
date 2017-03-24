@@ -1,6 +1,6 @@
 -neko test/bin/test.n
 -cp test
--cp src
+-cp hscript
 -lib utest
 -lib hscript
 -main TestAll

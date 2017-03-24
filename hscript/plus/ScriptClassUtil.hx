@@ -1,4 +1,4 @@
-package hscript_plus;
+package hscript.plus;
 
 class ScriptClassUtil {
 	public static var CLASS_NAME = Type.getClassName(ScriptClassUtil).split(".")[1];

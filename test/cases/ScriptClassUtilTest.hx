@@ -1,7 +1,7 @@
 package cases;
 
 import utest.Assert;
-import hscript_plus.ScriptClassUtil;
+import hscript.plus.ScriptClassUtil;
 
 class ScriptClassUtilTest {
     public function new() {}

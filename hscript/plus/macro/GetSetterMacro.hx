@@ -1,4 +1,4 @@
-package hscript_plus.macro;
+package hscript.plus.macro;
 
 import haxe.macro.Context;
 import haxe.macro.Expr;

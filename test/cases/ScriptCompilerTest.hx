@@ -1,7 +1,7 @@
 package cases;
 
 import utest.Assert;
-import hscript_plus.ScriptCompiler;
+import hscript.plus.ScriptCompiler;
 
 using StringTools;
 

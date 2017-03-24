@@ -1,6 +1,6 @@
-package hscript_plus;
+package hscript.plus;
 
-import hscript_plus.ScopeManager;
+import hscript.plus.ScopeManager;
 
 typedef ScriptClass = {
 	name:String,

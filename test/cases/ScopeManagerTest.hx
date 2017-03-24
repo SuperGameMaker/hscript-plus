@@ -1,7 +1,7 @@
 package cases;
 
 import utest.Assert;
-import hscript_plus.ScopeManager;
+import hscript.plus.ScopeManager;
 
 class ScopeManagerTest {
     var scope:ScopeManager;

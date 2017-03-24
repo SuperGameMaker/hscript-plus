@@ -1,4 +1,4 @@
-package hscript_plus;
+package hscript.plus;
 
 import hscript.Expr;
 import hscript.Interp;

@@ -1,7 +1,7 @@
 package cases;
 
 import utest.Assert;
-import hscript_plus.ScriptState;
+import hscript.plus.ScriptState;
 
 class ScriptStateTest {
     var state:ScriptState;

@@ -1,8 +1,8 @@
-package hscript_plus;
+package hscript.plus;
 
 typedef Record = Array<Scope>;
 
-@:build(hscript_plus.macro.GetSetterMacro.build())
+@:build(hscript.plus.macro.GetSetterMacro.build())
 class ScopeManager {
 	public var name(get, set):String;
 	public var type(get, set):ScopeType;
