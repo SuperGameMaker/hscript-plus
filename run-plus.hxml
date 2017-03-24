@@ -1,0 +1,7 @@
+-neko hscript-plus/bin/test.n
+-cp hscript
+-cp hscript-plus/test
+-lib utest
+-main TestAll
+
+-cmd neko hscript-plus/bin/test.n
