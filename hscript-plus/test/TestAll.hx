@@ -8,6 +8,7 @@ import cases.ScriptCompilerTest;
 import cases.ScriptStateTest;
 import cases.ScopeManagerTest;
 import cases.ParserTest;
+import cases.InterpTest;
 
 class TestAll {
 	public static function main() {
@@ -25,6 +26,7 @@ class TestAll {
 		runner.addCase(new ScriptCompilerTest());
 		runner.addCase(new ScopeManagerTest());
 		runner.addCase(new ParserTest());
+		runner.addCase(new InterpTest());
 	}
 	
 }

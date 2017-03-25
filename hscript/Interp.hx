@@ -319,9 +319,10 @@ class Interp {
 		case EIdent(id):
 			return resolve(id);
 		case EVar(n,_,e):
+			var value = expr(e);
 			declared.push({ n : n, old : locals.get(n) });
-			locals.set(n,{ r : (e == null)?null:expr(e) });
-			return null;
+			locals.set(n,{ r : value });
+			return value;
 		case EParent(e):
 			return expr(e);
 		case EBlock(exprs):
