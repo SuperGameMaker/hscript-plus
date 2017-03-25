@@ -47,7 +47,7 @@ enum Expr {
 #end
 	EConst( c : Const );
 	EIdent( v : String );
-	EVar( n : String, ?t : CType, ?e : Expr );
+	EVar( n : String, ?t : CType, ?e : Expr, ?access:Array<Access> );
 	EParent( e : Expr );
 	EBlock( e : Array<Expr> );
 	EField( e : Expr, f : String );
@@ -59,7 +59,7 @@ enum Expr {
 	EFor( v : String, it : Expr, e : Expr );
 	EBreak;
 	EContinue;
-	EFunction( args : Array<Argument>, e : Expr, ?name : String, ?ret : CType );
+	EFunction( args : Array<Argument>, e : Expr, ?name : String, ?ret : CType, ?access:Array<Access> );
 	EReturn( ?e : Expr );
 	EArray( e : Expr, index : Expr );
 	EArrayDecl( e : Array<Expr> );
@@ -70,6 +70,8 @@ enum Expr {
 	ETernary( cond : Expr, e1 : Expr, e2 : Expr );
 	ESwitch( e : Expr, cases : Array<{ values : Array<Expr>, expr : Expr }>, ?defaultExpr : Expr);
 	EDoWhile( cond : Expr, e : Expr);
+
+	EClass(name:String, e:Expr, ?baseClass:String);
 }
 
 typedef Argument = { name : String, ?t : CType, ?opt : Bool };
@@ -79,6 +81,15 @@ enum CType {
 	CTFun( args : Array<CType>, ret : CType );
 	CTAnon( fields : Array<{ name : String, t : CType }> );
 	CTParent( t : CType );
+}
+
+enum Access {
+	APublic;
+	APrivate;
+	AStatic;
+	AOverride;
+	ADynamic;
+	AInline;
 }
 
 #if hscriptPos

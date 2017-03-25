@@ -560,8 +560,9 @@ class Interp {
 			if( !match )
 				val = def == null ? null : expr(def);
 			return val;
+
+			default: return null;
 		}
-		return null;
 	}
 
 	function doWhileLoop(econd,e) {
