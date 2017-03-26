@@ -75,4 +75,14 @@ class Interp extends hscript.Interp {
 		if (isStatic)
 			object.__statics.push(name);
 	}
+
+	override function cnew(cl:String, args:Array<Dynamic>):Dynamic {
+		try {
+			return super.cnew(cl, args);
+		}
+		catch (e:Dynamic) {
+			var c = resolve(cl);
+			return ScriptClassUtil.create(c, args);
+		}
+	}
 }

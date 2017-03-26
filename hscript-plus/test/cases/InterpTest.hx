@@ -66,4 +66,20 @@ class InterpTest {
 		var ast = parser.parseString(script);
 		interp.execute(ast);
 	}
+
+	public function testNew() {
+		var script = '
+		class Object {
+			public function new()
+				Assert.pass();
+		}
+		';
+		var ast = parser.parseString(script);
+		interp.variables.set("Assert", Assert);
+		var Object = interp.execute(ast);
+
+		script = 'new Object();';
+		ast = parser.parseString(script);
+		interp.execute(ast);
+	}
 }
