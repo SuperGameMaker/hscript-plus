@@ -20,8 +20,6 @@ class ScriptStateTest {
                 var object = new Object(10, 10);
                 object.name = NAME;
                 Assert.equals('Ball', object.name);
-                Assert.equals(10, object.x);
-                Assert.equals(10, object.y);
             }
             
             public var x:Float = 0;
