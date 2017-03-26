@@ -26,7 +26,7 @@ class InterpTest {
 	public function testVariable() {
 		var script = '
 		class Object {
-			var mass:Float = 10;
+			var mass:physics.Mass = 10;
 		}
 		';
 		var ast = parser.parseString(script);
@@ -38,9 +38,8 @@ class InterpTest {
 	public function testFunction() {
 		var script = '
 		class Object {
-			public static function main() {
+			public static function main()
 				Assert.pass();
-			}
 		}
 		';
 		var ast = parser.parseString(script);
@@ -48,5 +47,23 @@ class InterpTest {
 		interp.execute(ast);
 		var object = interp.variables.get("Object");
 		object.main();
+	}
+
+	public function testPackage() {
+		var script = 'package test;';
+		var ast = parser.parseString(script);
+		interp.execute(ast);
+
+		Assert.equals("test", interp.packageName);
+	}
+
+	public function testImports() {
+		var script = '
+		import utest.Assert;
+
+		Assert.pass();
+		';
+		var ast = parser.parseString(script);
+		interp.execute(ast);
 	}
 }

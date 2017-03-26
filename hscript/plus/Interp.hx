@@ -3,8 +3,16 @@ package hscript.plus;
 import hscript.Expr;
 
 class Interp extends hscript.Interp {
+	public var packageName(default, null):String;
+
 	public function new() {
 		super();
+	}
+
+	override public function execute(e:Expr):Dynamic {
+		packageName = "";
+
+		return super.execute(e);
 	}
 
 	override public function expr(e:Expr):Dynamic {
@@ -12,6 +20,10 @@ class Interp extends hscript.Interp {
 		if (ret != null) return ret;
 
 		switch (e) {
+			case EPackage(path):
+				packageName = path.join(".");
+			case EImport(path):
+				importClass(path.join("."));
 			case EClass(name, e, baseClass):
 				var cls:Dynamic = null; // class
 				var baseClassObj = baseClass == null ? null : variables.get(baseClass);
@@ -46,7 +58,18 @@ class Interp extends hscript.Interp {
 		return ret;
 	}
 
-	inline function setExprToField(object:Dynamic, name:String, e:Expr, access:Array<Access>) {
+	// TODO: import anonymous structure class
+	function importClass(path:String) {
+		var className = path.split(".").pop();
+		var cls = Type.resolveClass(path);
+
+		if (cls == null)
+			throw '$path not found';
+		
+		variables.set(className, cls);
+	}
+
+	function setExprToField(object:Dynamic, name:String, e:Expr, access:Array<Access>) {
 		Reflect.setField(object, name, expr(e));
 		var isStatic = access != null && access.indexOf(AStatic) > -1;
 		if (isStatic)

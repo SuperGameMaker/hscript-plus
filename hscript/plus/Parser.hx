@@ -11,6 +11,16 @@ class Parser extends hscript.Parser {
 		allowTypes = true;
 	}
 
+	override function isBlock(e:Expr) {
+		var ret = super.isBlock(e);
+		if (ret) return ret;
+
+		return switch (expr(e)) {
+			case EPackage(_), EImport(_): true;
+			default: false;
+		}
+	}
+
 	override function parseStructure(id:String) {
 		var ret = super.parseStructure(id);
 
@@ -26,6 +36,12 @@ class Parser extends hscript.Parser {
 		}
 
 		return switch(id) {
+			case "package":
+				var path = parsePath();
+				mk(EPackage(path));
+			case "import":
+				var path = parsePath();
+				mk(EImport(path));
 			case "class":
 				var tk = token();
 				var name = null;
@@ -59,6 +75,30 @@ class Parser extends hscript.Parser {
 			case "inline": pushAndParseNext(AInline);
 
 			default: null;
+		}
+	}
+
+	function parsePath():Array<String> {
+		var tk = token();
+		switch (tk) {
+			case TId(id):
+				var path = [id];
+				while (true) {
+					tk = token();
+					if (tk != TDot)
+						break;
+					tk = token();
+					switch (tk) {
+						case TId(id):
+							path.push(id);
+						default:
+							unexpected(tk);
+					}
+				}
+				return path;
+			default:
+				unexpected(tk);
+				return [];
 		}
 	}
 

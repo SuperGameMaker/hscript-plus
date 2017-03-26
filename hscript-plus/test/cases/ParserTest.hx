@@ -57,14 +57,46 @@ class ParserTest {
 	}
 
 	public function testAccessModifiers() {
-		var script = '
-		public static function main() {}
-		';
+		var script = 'public static function main() {}';
 		var ast = parser.parseString(script);
-		trace(ast);
+		
 		switch (ast) {
 			case EFunction(_, _, _, _, access):
 				Assert.contains(AStatic, access);
+			default: Assert.fail();
+		}
+	}
+
+	public function testPackage() {
+		var script = 'package test;';
+		var ast = parser.parseString(script);
+		
+		switch (ast) {
+			case EPackage(path):
+				Assert.equals("test", path[0]);
+			default: Assert.fail();
+		}
+	}
+
+	public function testImports() {
+		var packages = ["test.TestClass", "physics.Box"];
+		var script = '
+		import ${packages[0]};
+		import ${packages[1]};
+		';
+		var ast = parser.parseString(script);
+
+		switch (ast) {
+			case EBlock(exprList):
+				var index = 0;
+				for (e in exprList) {
+					switch (e) {
+						case EImport(path):
+							Assert.same(packages[index], path.join('.'));
+						default: Assert.fail();
+					}
+					index++;
+				}
 			default: Assert.fail();
 		}
 	}
