@@ -39,10 +39,17 @@ class ScriptClassUtilTest {
         Assert.equals(Controller, Keyboard.__superClass);
     }
 
-     public function testClassExtends_BodyParameter() {
+    public function testClassExtends_BodyParameter() {
         var Controller = {};
         var Keyboard = ScriptClassUtil.classExtends(Controller, { enable:false });
         
-        Assert.isFalse(Keyboard.enable);
+        Assert.notNull(Keyboard.enable);
+    }
+
+    public function testClassExtends_StaticFieldsRemoved() {
+        var Entity:Dynamic = { pop:0, __statics:["pop"] };
+        var Enemy:Dynamic = ScriptClassUtil.classExtends(Entity);
+
+        Assert.isNull(Enemy.pop);
     }
 }

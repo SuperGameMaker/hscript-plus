@@ -6,37 +6,25 @@ class ScriptClassUtil {
 	public static var classExtends_FUNC_NAME = "classExtends";
 
 	public static function create(baseClass:Dynamic, ?args:Array<Dynamic>):Dynamic {
-		inline function printError(e:Dynamic)
-			throw('$CLASS_NAME.create: $e');
-		
 		if (args == null) args = [];
-		var table = Reflect.copy(baseClass);
+		var _this = Reflect.copy(baseClass);
 		
-		for (fieldName in Reflect.fields(table)) {
-			var field = Reflect.field(table, fieldName);
+		for (fieldName in Reflect.fields(_this)) {
+			var field = Reflect.field(_this, fieldName);
 			if (!Reflect.isFunction(field)) continue;
 			
 			// call `new()`
 			if (fieldName == "new") {
-				try {
-					Reflect.callMethod(table, field, [table].concat(args));
-					continue;
-				}
-				catch (e:Dynamic) {
-					printError(e);
-				}
+				Reflect.callMethod(_this, field, [_this].concat(args));
+				continue;
 			}
 			
-			try { // bind `table` to method
-				var bindedMethod = function(?args:Array<Dynamic>) return Reflect.callMethod(table, field, [table].concat(args));
-				Reflect.setField(table, fieldName, Reflect.makeVarArgs(bindedMethod));
-			}
-			catch (e:Dynamic) {
-				printError(e);
-			}
+			var boundMethod = // bind `_this` to method
+			function(?args:Array<Dynamic>) return Reflect.callMethod(_this, field, [_this].concat(args));
+			Reflect.setField(_this, fieldName, Reflect.makeVarArgs(boundMethod));
 		}
 		
-		return table;
+		return _this;
 	}
 	
 	public static function classExtends(baseClass:Dynamic, ?body:Dynamic):Dynamic {
