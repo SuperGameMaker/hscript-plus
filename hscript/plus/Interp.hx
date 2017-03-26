@@ -14,7 +14,7 @@ class Interp extends hscript.Interp {
 		switch (e) {
 			case EClass(name, e, baseClass):
 				var cls:Dynamic = null; // class
-				var baseClassObj = variables.get(baseClass);
+				var baseClassObj = baseClass == null ? null : variables.get(baseClass);
 
 				if (baseClassObj == null)
 					cls = {};
@@ -48,7 +48,7 @@ class Interp extends hscript.Interp {
 
 	inline function setExprToField(object:Dynamic, name:String, e:Expr, access:Array<Access>) {
 		Reflect.setField(object, name, expr(e));
-		var isStatic = access.indexOf(AStatic) > -1;
+		var isStatic = access != null && access.indexOf(AStatic) > -1;
 		if (isStatic)
 			object.__statics.push(name);
 	}
