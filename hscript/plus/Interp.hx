@@ -11,7 +11,6 @@ class Interp extends hscript.Interp {
 
 	override public function execute(e:Expr):Dynamic {
 		packageName = "";
-
 		return super.execute(e);
 	}
 
@@ -40,8 +39,7 @@ class Interp extends hscript.Interp {
 						for (e in exprList) {
 							switch (e) {
 								case EFunction(args, _, name, _, access):
-									var notStatic = access.indexOf(AStatic) == -1;
-									if (notStatic)
+									if (!isStatic(access))
 										args.push({ name:"this"});
 									setExprToField(cls, name, e, access);
 								case EVar(name, _, e, access):
@@ -71,9 +69,12 @@ class Interp extends hscript.Interp {
 
 	function setExprToField(object:Dynamic, name:String, e:Expr, access:Array<Access>) {
 		Reflect.setField(object, name, expr(e));
-		var isStatic = access != null && access.indexOf(AStatic) > -1;
-		if (isStatic)
+		if (isStatic(access))
 			object.__statics.push(name);
+	}
+
+	inline function isStatic(access:Array<Access>) {
+		return access != null && access.indexOf(AStatic) > -1;
 	}
 
 	override function cnew(cl:String, args:Array<Dynamic>):Dynamic {
