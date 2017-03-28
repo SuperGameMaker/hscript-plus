@@ -18,7 +18,7 @@ class Interp extends hscript.Interp {
 		var ret = super.expr(e);
 		if (ret != null) return ret;
 
-		switch (e) {
+		switch (edef(e)) {
 			case EPackage(path):
 				packageName = path.join(".");
 			case EImport(path):
@@ -34,13 +34,13 @@ class Interp extends hscript.Interp {
 
 				variables.set(name, cls);
 
-				switch (e) {
+				switch (edef(e)) {
 					case EBlock(exprList):
 						for (e in exprList) {
-							switch (e) {
+							switch (edef(e)) {
 								case EFunction(args, _, name, _, access):
 									if (!isStatic(access))
-										args.push({ name:"this"});
+										args.push({ name:"this" });
 									setExprToField(cls, name, e, access);
 								case EVar(name, _, e, access):
 									setExprToField(cls, name, e, access);

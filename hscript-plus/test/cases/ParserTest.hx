@@ -4,6 +4,7 @@ import utest.Assert;
 import hscript.Expr;
 import hscript.plus.Parser;
 
+@:access(hscript.plus.Parser.expr)
 class ParserTest {
 	var parser:Parser;
 
@@ -17,7 +18,7 @@ class ParserTest {
 		var script = 'class Box {}';
 		var ast = parser.parseString(script);
 		
-		switch (ast) {
+		switch (parser.expr(ast)) {
 			case EClass(name, _, _):
 				Assert.equals("Box", name);
 			default:
@@ -29,7 +30,7 @@ class ParserTest {
 		var script = 'class Box extends Cardboard {}';
 		var ast = parser.parseString(script);
 		
-		switch (ast) {
+		switch (parser.expr(ast)) {
 			case EClass(_, _, baseClass):
 				Assert.equals("Cardboard", baseClass);
 			default:
@@ -45,9 +46,9 @@ class ParserTest {
 		}';
 		var ast = parser.parseString(script);
 		
-		switch (ast) {
+		switch (parser.expr(ast)) {
 			case EClass(_, e, _):
-				switch (e) {
+				switch (parser.expr(e)) {
 					case EBlock(_): Assert.pass();
 					default: Assert.fail();
 				}
@@ -60,7 +61,7 @@ class ParserTest {
 		var script = 'public static function main() {}';
 		var ast = parser.parseString(script);
 		
-		switch (ast) {
+		switch (parser.expr(ast)) {
 			case EFunction(_, _, _, _, access):
 				Assert.contains(AStatic, access);
 			default: Assert.fail();
@@ -71,7 +72,7 @@ class ParserTest {
 		var script = 'package test;';
 		var ast = parser.parseString(script);
 		
-		switch (ast) {
+		switch (parser.expr(ast)) {
 			case EPackage(path):
 				Assert.equals("test", path[0]);
 			default: Assert.fail();
@@ -86,11 +87,11 @@ class ParserTest {
 		';
 		var ast = parser.parseString(script);
 
-		switch (ast) {
+		switch (parser.expr(ast)) {
 			case EBlock(exprList):
 				var index = 0;
 				for (e in exprList) {
-					switch (e) {
+					switch (parser.expr(e)) {
 						case EImport(path):
 							Assert.same(packages[index], path.join('.'));
 						default: Assert.fail();
