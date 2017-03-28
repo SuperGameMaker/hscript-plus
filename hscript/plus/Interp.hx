@@ -35,18 +35,11 @@ class Interp extends hscript.Interp {
 				variables.set(name, cls);
 
 				switch (edef(e)) {
+					case EFunction(_, _), EVar(_):
+						processClassFields(cls, e);
 					case EBlock(exprList):
-						for (e in exprList) {
-							switch (edef(e)) {
-								case EFunction(args, _, name, _, access):
-									if (!isStatic(access))
-										args.push({ name:"this" });
-									setExprToField(cls, name, e, access);
-								case EVar(name, _, e, access):
-									setExprToField(cls, name, e, access);
-								default:
-							}
-						}
+						for (e in exprList)
+							processClassFields(cls, e);
 					default:
 				}
 			ret = cls;
@@ -54,6 +47,18 @@ class Interp extends hscript.Interp {
 		}
 
 		return ret;
+	}
+
+	function processClassFields(cls:Dynamic, e:Expr) {
+		switch (edef(e)) {
+			case EFunction(args, _, name, _, access):
+				if (!isStatic(access))
+					args.unshift({ name:"this" });
+				setExprToField(cls, name, e, access);
+			case EVar(name, _, e, access):
+				setExprToField(cls, name, e, access);
+			default:
+		}
 	}
 
 	// TODO: import anonymous structure class
