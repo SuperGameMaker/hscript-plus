@@ -25,10 +25,13 @@ class Parser extends hscript.Parser {
 		var ret = super.parseStructure(id);
 
 		if (ret != null) {
-			switch (ret) {
+			switch (expr(ret)) {
+				case EVar(name, t, e, access):
+					ret = mk(EVar(name, t, e, this.access));
+					this.access = [];
 				case EFunction(args, e, name, r, a):
-					a = [while (access.length > 0) access.pop()];
-					ret = mk(EFunction(args, e, name, r, a));
+					ret = mk(EFunction(args, e, name, r, this.access));
+					this.access = [];
 				default:
 			}
 
