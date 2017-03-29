@@ -106,6 +106,9 @@ class Parser extends hscript.Parser {
 					}
 				}
 				return path;
+			case TSemicolon:
+				push(tk);
+				return [];
 			default:
 				unexpected(tk);
 				return [];

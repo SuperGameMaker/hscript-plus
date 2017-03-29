@@ -101,4 +101,16 @@ class ParserTest {
 			default: Assert.fail();
 		}
 	}
+
+	public function testEmptyPackageName() {
+		var script = 'package;';
+		var ast = parser.parseString(script);
+
+		switch (parser.expr(ast)) {
+			case EPackage(path):
+				Assert.equals("", path.join("."));
+			default:
+				Assert.fail();
+		}
+	}
 }
