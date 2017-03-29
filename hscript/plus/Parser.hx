@@ -22,16 +22,23 @@ class Parser extends hscript.Parser {
 	}
 
 	override function parseStructure(id:String) {
+		// workaround for bug failing to detect 
+		// static function with var declaration
+		var access = null;
+		switch (id) {
+			case "function", "var":
+				access = this.access;
+				this.access = [];
+		}
+
 		var ret = super.parseStructure(id);
 
 		if (ret != null) {
 			switch (expr(ret)) {
 				case EVar(name, t, e, access):
-					ret = mk(EVar(name, t, e, this.access));
-					this.access = [];
+					ret = mk(EVar(name, t, e, access));
 				case EFunction(args, e, name, r, a):
-					ret = mk(EFunction(args, e, name, r, this.access));
-					this.access = [];
+					ret = mk(EFunction(args, e, name, r, access));
 				default:
 			}
 

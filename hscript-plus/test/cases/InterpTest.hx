@@ -45,8 +45,8 @@ class InterpTest {
 		var ast = parser.parseString(script);
 		interp.variables.set("Assert", Assert);
 		interp.execute(ast);
-		var object = interp.variables.get("Object");
-		object.main();
+		var Object = interp.variables.get("Object");
+		Object.main();
 	}
 
 	public function testPackage() {
@@ -81,5 +81,20 @@ class InterpTest {
 		script = 'new Object();';
 		ast = parser.parseString(script);
 		interp.execute(ast);
+	}
+
+	public function testStaticFunctionWithVarDeclare() {
+		var script = "
+		class Object {
+            public static function main() {
+                var x = 10;
+            }
+    	}
+		";
+		var ast = parser.parseString(script);
+		interp.execute(ast);
+		var main = interp.variables.get("main");
+		main();
+		Assert.pass();
 	}
 }

@@ -15,7 +15,6 @@ class ScriptStateTest {
     public function testReadmeUsageExample() {
         var script = "
         class Object {
-            // main() is called automatically when script is executed
             public static function main() {
                 var object = new Object(10, 10);
                 object.name = NAME;
@@ -43,35 +42,29 @@ class ScriptStateTest {
     public function testClassCreated() {
         var script = '
         class Object {
-            public function new(mass) {
-                this.mass = mass;
+            public static function main() {
+                object = new Object(10);
+                Assert.equals(10, object.mass);
             }
-        }
 
-        object = new Object(10);
-        ';
-        state.executeString(script);
-        var object = state.get("object");
-        Assert.equals(10, object.mass);
-    }
+            public var mass:Float = 0;
 
-    public function testMainFunctionInClassCalled() {
-        var script = '
-        class Object {
-            public static function main()
-                Assert.pass();
-        }
+            public function new(mass)
+                this.mass = mass;
+        }        
         ';
         state.set("Assert", Assert);
         state.executeString(script);
     }
 
-    public function testMainFunctionOutsideClassCalled() {
-        var script = '
-        public static function main()
-            Assert.pass();
-        ';
-        state.set("Assert", Assert);
-        state.executeString(script);
-    }
+    public function testFunction() {
+		var script = '
+		class Object {
+			public static function main()
+				Assert.pass();
+		}
+		';
+		state.set("Assert", Assert);
+		state.executeString(script);
+	}
 }
