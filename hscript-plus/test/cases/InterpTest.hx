@@ -1,5 +1,6 @@
 package cases;
 
+import hscript.plus.ScriptClassUtil;
 import utest.Assert;
 import hscript.plus.Interp;
 import hscript.plus.Parser;
@@ -81,6 +82,28 @@ class InterpTest {
 		script = 'new Object();';
 		ast = parser.parseString(script);
 		interp.execute(ast);
+	}
+
+	public function testThisKeyword() {
+		var script = '
+		class Object {
+			var mass:Float = 0;
+			public function new(mass:Float) {
+				this.mass = mass;
+			}
+
+			public function assert(value) {
+				Assert.equals(value, mass);
+			}
+		}
+		';
+		var ast = parser.parseString(script); trace(ast);
+		interp.variables.set("Assert", Assert);
+		interp.execute(ast);
+
+		var Object = interp.variables.get("Object");
+		var object = ScriptClassUtil.create(Object, [20]);
+		object.assert(20);
 	}
 
 	public function testStaticFunctionWithVarDeclare() {

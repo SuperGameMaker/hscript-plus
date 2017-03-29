@@ -91,4 +91,15 @@ class Interp extends hscript.Interp {
 			return ScriptClassUtil.create(c, args);
 		}
 	}
+
+	override function resolve(id:String):Dynamic {
+		var _this = locals.get("this");
+		if (_this != null)
+			_this = _this.r;
+
+		return
+		if (!locals.exists(id) && Reflect.hasField(_this, id))
+			Reflect.field(_this, id);
+		else super.resolve(id);
+	}
 }
