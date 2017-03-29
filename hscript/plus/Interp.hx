@@ -29,7 +29,7 @@ class Interp extends hscript.Interp {
 
 				if (baseClassObj == null)
 					cls = {};
-				else cls = ScriptClassUtil.classExtends(baseClass);
+				else cls = ClassUtil.classExtends(baseClass);
 				cls.__statics = new Array<String>();
 
 				variables.set(name, cls);
@@ -88,7 +88,7 @@ class Interp extends hscript.Interp {
 		}
 		catch (e:Dynamic) {
 			var c = resolve(cl);
-			return ScriptClassUtil.create(c, args);
+			return ClassUtil.create(c, args);
 		}
 	}
 

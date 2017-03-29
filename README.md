@@ -75,7 +75,7 @@ There are 4 classes in `hscript-plus`
 	- contains `hscript.Parser` and `hscript.Interp`
 	- executes scripts and stores global variables in them
 	- comes with some error handlings
-- [`hscript_plus.ScriptClassUtil`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptClassUtil.hx):
+- [`hscript_plus.ClassUtil`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ClassUtil.hx):
 	- is the main class for class emulation
 	- has two static functions `create()` and `classExtends()` for creating new object and new child class, respectively
 - [`hscript_plus.ScriptCompiler`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptCompiler.hx):
@@ -113,7 +113,7 @@ There are 4 classes in `hscript-plus`
 ## Todos
 - [ ] Call variables and functions calling `this`
 - [ ] Try catch interpreting error
-- [ ] Filter out static fields in `ScriptClassUtil.classExtends()`
+- [ ] Filter out static fields in `ClassUtil.classExtends()`
 - [ ] String interpolation
 
 ### **End of hscript-plus readme**

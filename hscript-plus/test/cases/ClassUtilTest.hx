@@ -1,9 +1,9 @@
 package cases;
 
 import utest.Assert;
-import hscript.plus.ScriptClassUtil;
+import hscript.plus.ClassUtil;
 
-class ScriptClassUtilTest {
+class ClassUtilTest {
     public function new() {}
 
     public function testCreate() {
@@ -16,7 +16,7 @@ class ScriptClassUtilTest {
 
         var x = 10;
         var y = 10;
-        var point = ScriptClassUtil.create(Point, [x, y]);
+        var point = ClassUtil.create(Point, [x, y]);
 
         Assert.equals(x, point.x);
         Assert.equals(y, point.y);
@@ -29,26 +29,26 @@ class ScriptClassUtilTest {
             Assert.pass();
         });
 
-        ScriptClassUtil.create(Point);
+        ClassUtil.create(Point);
     }
 
     public function testClassExtends_SuperClass() {
         var Controller = {};
-        var Keyboard = ScriptClassUtil.classExtends(Controller);
+        var Keyboard = ClassUtil.classExtends(Controller);
         
         Assert.equals(Controller, Keyboard.__superClass);
     }
 
     public function testClassExtends_BodyParameter() {
         var Controller = {};
-        var Keyboard = ScriptClassUtil.classExtends(Controller, { enable:false });
+        var Keyboard = ClassUtil.classExtends(Controller, { enable:false });
         
         Assert.notNull(Keyboard.enable);
     }
 
     public function testClassExtends_StaticFieldsRemoved() {
         var Entity:Dynamic = { pop:0, __statics:["pop"] };
-        var Enemy:Dynamic = ScriptClassUtil.classExtends(Entity);
+        var Enemy:Dynamic = ClassUtil.classExtends(Entity);
 
         Assert.isNull(Enemy.pop);
     }

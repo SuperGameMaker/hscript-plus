@@ -67,4 +67,6 @@ class ScriptStateTest {
 		state.set("Assert", Assert);
 		state.executeString(script);
 	}
+
+    
 }

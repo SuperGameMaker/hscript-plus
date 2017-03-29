@@ -1,6 +1,6 @@
 package cases;
 
-import hscript.plus.ScriptClassUtil;
+import hscript.plus.ClassUtil;
 import utest.Assert;
 import hscript.plus.Interp;
 import hscript.plus.Parser;
@@ -102,7 +102,7 @@ class InterpTest {
 		interp.execute(ast);
 
 		var Object = interp.variables.get("Object");
-		var object = ScriptClassUtil.create(Object, [20]);
+		var object = ClassUtil.create(Object, [20]);
 		object.assert(20);
 	}
 

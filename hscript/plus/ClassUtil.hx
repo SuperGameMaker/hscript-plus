@@ -1,7 +1,7 @@
 package hscript.plus;
 
-class ScriptClassUtil {
-	public static var CLASS_NAME = Type.getClassName(ScriptClassUtil).split(".")[1];
+class ClassUtil {
+	public static var CLASS_NAME = Type.getClassName(ClassUtil).split(".")[1];
 	public static var create_FUNC_NAME = "create";
 	public static var classExtends_FUNC_NAME = "classExtends";
 
