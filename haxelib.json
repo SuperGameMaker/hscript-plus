@@ -5,7 +5,6 @@
 	"tags": ["scripting", "hscript"],
 	"description": "Hscript, but with classes",
 	"version": "0.1.0",
-	"classPath": "hscript/",
 	"releasenote": "Uh... not done yet!",
 	"contributors": ["DleanJeans"],
 	"dependencies": {}
