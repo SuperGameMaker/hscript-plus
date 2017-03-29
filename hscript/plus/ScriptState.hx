@@ -9,9 +9,10 @@ using StringTools;
 class ScriptState {
 	public static var CLASS_NAME = Type.getClassName(ScriptState).split(".")[1];
 	
-	public var script:String = "";
-	public var ast:Expr;
 	public var variables(get, null):Map<String, Dynamic>; function get_variables() return _interp.variables;
+	public var getFileContent:String->String #if !flash = sys.io.File.getContent #end; 
+
+	public var ast:Expr;
 
 	var _parser:hscript.plus.Parser;
 	var _interp:hscript.plus.Interp;
@@ -32,7 +33,9 @@ class ScriptState {
 	}
 
 	public function executeFile(path:String) {
-		var script = sys.io.File.getContent(path);
+		if (getFileContent == null)
+			throw "Provide a getFileContent function first!";
+		var script = getFileContent(path);
 		execute(script, path);
 	}
 	
