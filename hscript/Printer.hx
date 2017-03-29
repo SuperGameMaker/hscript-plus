@@ -59,7 +59,7 @@ class Printer {
 
 	function addType( t : CType ) {
 		if( t != null ) {
-			add(" : ");
+			add(":");
 			type(t);
 		}
 	}
@@ -98,8 +98,8 @@ class Printer {
 					expr(e);
 					add(";\n");
 				}
-				tabs = tabs.substr(1);
 				add("}");
+				tabs = tabs.substr(1);
 			}
 		case EField(e, f):
 			expr(e);
@@ -224,7 +224,7 @@ class Printer {
 				add("{\n");
 				for( f in fl ) {
 					add(tabs);
-					add(f.name+" : ");
+					add(f.name+":");
 					expr(f.e);
 					add(",\n");
 				}
@@ -257,6 +257,22 @@ class Printer {
 				expr(def);
 				add(";\n");
 			}
+			add("}");
+
+		case EPackage(path):
+			var name = path.join(".");
+			add("package $name;");
+		case EImport(path):
+			var name = path.join(".");
+			add("import $name;");
+		case EClass(name, e, baseClass):
+			add('class $name');
+			if (baseClass != null)
+				add(' extends $baseClass');
+			add(' {\n');
+			tabs += "\t";
+			expr(e);
+			tabs = tabs.substr(1);
 			add("}");
 		}
 	}
