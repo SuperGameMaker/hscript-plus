@@ -97,7 +97,7 @@ class InterpTest {
 			}
 		}
 		';
-		var ast = parser.parseString(script); trace(ast);
+		var ast = parser.parseString(script);
 		interp.variables.set("Assert", Assert);
 		interp.execute(ast);
 
