@@ -120,4 +120,16 @@ class InterpTest {
 		main();
 		Assert.pass();
 	}
+
+	public function testVariableDeclaredWithoutValue() {
+		var script = "
+		class Test {
+			var sprite;
+    	}
+		";
+		var ast = parser.parseString(script);
+		trace(ast);
+		interp.execute(ast);
+		Assert.pass();
+	}
 }
