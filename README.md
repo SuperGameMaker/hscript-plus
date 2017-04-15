@@ -1,6 +1,7 @@
 # hscript-plus
+*Note*: This README is kinda dated for now
 
-Adds class to [hscript](https://github.com/HaxeFoundation/hscript) through the use of anonymous structure aka. `Dynamic` in Haxe, which is equivalent to table in Lua.
+Adds class to [hscript](https://github.com/HaxeFoundation/hscript) by leveraging anonymous structure aka. `Dynamic` in Haxe, which is equivalent to table in Lua.
 
 ## Getting Started
 ### Installing
