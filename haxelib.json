@@ -3,7 +3,7 @@
 	"url" : "https://github.com/DleanJeans/hscript-plus/",
 	"license": "MIT",
 	"tags": ["scripting", "hscript"],
-	"description": "Hscript, but with classes",
+	"description": "hscript with classes",
 	"version": "0.1.0",
 	"releasenote": "Uh... not done yet!",
 	"contributors": ["DleanJeans"],
