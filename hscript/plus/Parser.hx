@@ -22,8 +22,8 @@ class Parser extends hscript.Parser {
 	}
 
 	override function parseStructure(id:String) {
-		// workaround for bug failing to detect 
-		// static function with var declaration
+		// workaround for bug failing to get access modfiers
+		// for function with var declarations inside
 		var access = null;
 		switch (id) {
 			case "function", "var":
