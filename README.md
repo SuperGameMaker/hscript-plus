@@ -1,5 +1,4 @@
 # hscript-plus
-*Note*: This README is kinda dated for now
 
 Adds class to [hscript](https://github.com/HaxeFoundation/hscript) by leveraging anonymous structure aka. `Dynamic` in Haxe, which is equivalent to table in Lua.
 
@@ -72,52 +71,35 @@ Object.main();
 
 ## How it works
 There are 4 classes in `hscript-plus`
-- [`hscript_plus.ScriptState`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptState.hx)
-	- contains `hscript.Parser` and `hscript.Interp`
+- [`hscript.plus.ScriptState`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/ScriptState.hx)
+	- contains `hscript.plus.Parser` and `hscript.plus.Interp`
 	- executes scripts and stores global variables in them
-	- comes with some error handlings
-- [`hscript_plus.ClassUtil`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ClassUtil.hx):
+- [`hscript.plus.ClassUtil`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/ClassUtil.hx):
 	- is the main class for class emulation
 	- has two static functions `create()` and `classExtends()` for creating new object and new child class, respectively
-- [`hscript_plus.ScriptCompiler`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScriptCompiler.hx):
-	- processes the scripts before getting executed to optimize the scripts for code completion/suggestion
-	- processes package name
-	- processes imports
-	- turns class declarations to anonymous structure declarations
-	- adds `this` as the first parameter for member functions
-	- turns variable and function declarations to anonymous structure field assignment.
-	- Example:
-	```Haxe
-	class Object {
-		var name:String = "";
-		public function new(name:String) {
-			this.name = name;
-		}
-	}
-	// to
-	Object = {}; {
-		Object.name = "";
-		Object.new = function(this, name:String) {
-			this.name = name;
-		}
-	}
-	```
-	- soon most of it will be replaced with an extended Parser
-- [`hscript_plus.ScopeManager`](https://github.com/DleanJeans/hscript-plus/blob/master/hscript_plus/ScopeManager.hx):
-	- used in `ScriptCompiler`
-	- stores fields in class or function scopes so function and variable declarations can be decided to belong to an anonymous structure or not
-- 
+- [`hscript.plus.Parser`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/Parser.hx): An extended `hscript.Parser`
+	- Parses keywords: `package`, `import`, `class`, `static`
+	- Parses (but this has no effects) access modifier keywords to prevent runtime errors: `public`, `private`, `override`, `dynamic`, `inline`
+- [`hscript.plus.Interp`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/Interp.hx): An extended `hscirpt.Interp`
+	- Auto imports class
+	- Handles class declaration
+	- Unshifts a `this` parameter to every nonstatic member function
+	- Overrides `Interp::cnew()` to create script object if `super.cnew()` fails to create a real class when call `new ClassName(...)`
+	- "Automatically" adds `this.` to access class members, by overriding [`Interp::resolve()`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/Interp.hx#L97) to get `this` object from `locals` value
+
+	
 
 ## Limitations
-- You need to access class members from `this` 
+- ~~You need to access class members from `this`~~
 
 ## Todos
-- [ ] Call variables and functions calling `this`
-- [ ] Try catch interpreting error
-- [ ] Filter out static fields in `ClassUtil.classExtends()`
 - [ ] String interpolation
+- [ ] Try catch interpreting error
+- [ ] Hotswapping
+- [x] Call variables and functions calling `this`
+- [x] Filter out static fields in `ClassUtil.classExtends()`
 
-### **End of hscript-plus readme**
+### **End of hscript-plus README**
 
 
 hscript
