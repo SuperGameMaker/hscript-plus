@@ -18,7 +18,7 @@ haxelib install hscript
 Go read the copy of hscript README [below](#hscript)
 
 #### Limitations
-- No wildcard importing
+- No wildcard imports
 - No string interpolation
 - No parameter default value
 
@@ -79,7 +79,7 @@ There are 4 classes in `hscript-plus`
 	- has two static functions `create()` and `classExtends()` for creating new object and new child class, respectively
 - [`hscript.plus.Parser`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/Parser.hx): An extended `hscript.Parser`
 	- Parses keywords: `package`, `import`, `class`, `static`
-	- Parses (but this has no effects) access modifier keywords to prevent runtime errors: `public`, `private`, `override`, `dynamic`, `inline`
+	- Parses access modifier keywords to prevent runtime errors: `public`, `private`, `override`, `dynamic`, `inline` (but these have no effects over functions and variables)
 - [`hscript.plus.Interp`](https://github.com/DleanJeans/hscript-plus/blob/dev/hscript/plus/Interp.hx): An extended `hscirpt.Interp`
 	- Auto imports class
 	- Handles class declaration
