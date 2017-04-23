@@ -146,6 +146,7 @@ class Bytes {
 		#end
 		bout.addByte(Type.enumIndex(e));
 		switch( e ) {
+		case EClass(_, _), EImport(_), EPackage(_):
 		case EConst(c):
 			doEncodeConst(c);
 		case EIdent(v):
