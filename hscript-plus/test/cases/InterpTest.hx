@@ -16,11 +16,27 @@ class InterpTest {
 		parser = new Parser();
 	}
 
+	inline function get(name:String) {
+		return interp.variables.get(name);
+	}
+
+	inline function set(name:String, value:Dynamic) {
+		interp.variables.set(name, value);
+	}
+
+	inline function execute(ast) {
+		return interp.execute(ast);
+	}
+
+	inline function getAst(script:String) {
+		return parser.parseString(script);
+	}
+
 	public function testNotNull() {
 		var script = 'class Object {}';
-		var ast = parser.parseString(script);
-		interp.execute(ast);
-		var object = interp.variables.get("Object");
+		var ast = getAst(script);
+		execute(ast);
+		var object = get("Object");
 		Assert.notNull(object);
 	}
 
@@ -30,30 +46,28 @@ class InterpTest {
 			var mass:physics.Mass = 10;
 		}
 		';
-		var ast = parser.parseString(script);
-		interp.execute(ast);
-		var object = interp.variables.get("Object");
+		var ast = getAst(script);
+		execute(ast);
+		var object = get("Object");
 		Assert.equals(10, object.mass);
 	}
 
 	public function testFunction() {
 		var script = '
-		class Object {
-			public static function main()
-				Assert.pass();
-		}
+		public function main()
+			pass();
 		';
-		var ast = parser.parseString(script);
-		interp.variables.set("Assert", Assert);
-		interp.execute(ast);
-		var Object = interp.variables.get("Object");
-		Object.main();
+		var ast = getAst(script);
+		set("pass", Assert.pass);
+		execute(ast);
+		var main = get("main");
+		main();
 	}
 
 	public function testPackage() {
 		var script = 'package test;';
-		var ast = parser.parseString(script);
-		interp.execute(ast);
+		var ast = getAst(script);
+		execute(ast);
 
 		Assert.equals("test", interp.packageName);
 	}
@@ -64,8 +78,8 @@ class InterpTest {
 
 		Assert.pass();
 		';
-		var ast = parser.parseString(script);
-		interp.execute(ast);
+		var ast = getAst(script);
+		execute(ast);
 	}
 
 	public function testNew() {
@@ -75,13 +89,13 @@ class InterpTest {
 				Assert.pass();
 		}
 		';
-		var ast = parser.parseString(script);
-		interp.variables.set("Assert", Assert);
-		var Object = interp.execute(ast);
+		var ast = getAst(script);
+		set("Assert", Assert);
+		var Object = execute(ast);
 
 		script = 'new Object();';
-		ast = parser.parseString(script);
-		interp.execute(ast);
+		ast = getAst(script);
+		execute(ast);
 	}
 
 	public function testThisKeyword() {
@@ -97,11 +111,11 @@ class InterpTest {
 			}
 		}
 		';
-		var ast = parser.parseString(script);
-		interp.variables.set("Assert", Assert);
-		interp.execute(ast);
+		var ast = getAst(script);
+		set("Assert", Assert);
+		execute(ast);
 
-		var Object = interp.variables.get("Object");
+		var Object = get("Object");
 		var object = ClassUtil.create(Object, [20]);
 		object.assert(20);
 	}
@@ -114,9 +128,9 @@ class InterpTest {
             }
     	}
 		";
-		var ast = parser.parseString(script);
-		interp.execute(ast);
-		var main = interp.variables.get("main");
+		var ast = getAst(script);
+		execute(ast);
+		var main = get("main");
 		main();
 		Assert.pass();
 	}
@@ -127,9 +141,41 @@ class InterpTest {
 			var sprite;
     	}
 		";
-		var ast = parser.parseString(script);
-		trace(ast);
-		interp.execute(ast);
+		var ast = getAst(script);
+		execute(ast);
 		Assert.pass();
 	}
+
+	public function testWithoutThis() {
+		var script = '
+		class WithoutThis {
+			var x:Int;
+			public function new() {
+				x = 0;
+			}
+		}
+		';
+		var ast = getAst(script);
+		execute(ast);
+		var WithoutThis = get("WithoutThis");
+		var testObject = ClassUtil.create(WithoutThis);
+		Assert.equals(0, testObject.x);
+	}
+
+	public function testSetGlobalField() {
+		var script = '
+		class SetGlobalField {
+			public function new() {
+				trace(this);
+				pass = true;
+			}
+		}
+		';
+		var ast = getAst(script);
+		execute(ast);
+		var SetGlobalField = get("SetGlobalField");
+		var testObject = ClassUtil.create(SetGlobalField);
+		Assert.isTrue(testObject.pass);
+	}
+
 }

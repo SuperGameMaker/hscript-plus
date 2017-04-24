@@ -41,10 +41,9 @@ class ScriptStateTest {
 
     public function testClassCreated() {
         var script = '
-        class Object {
+        class ClassCreated {
             public static function main() {
-                object = new Object(10);
-                Assert.equals(10, object.mass);
+                return new ClassCreated(10);
             }
 
             public var mass:Float = 0;
@@ -53,8 +52,9 @@ class ScriptStateTest {
                 this.mass = mass;
         }        
         ';
-        state.set("Assert", Assert);
+        var testObject = 
         state.executeString(script);
+        Assert.equals(10, testObject.mass);
     }
 
     public function testFunction() {
@@ -71,4 +71,17 @@ class ScriptStateTest {
     public function testExecuteFile_Import() {
         state.executeFile("hscript-plus/test/scripts/ExecuteFile_Import.hx");
     }
-}
+
+    public function testMainFunctionAutoCalled() {
+        var script = "
+        import utest.Assert;
+
+        class MainFunctionAutoCalled {
+            public static function main() {
+                Assert.pass();
+            }
+        }
+        ";
+        state.executeString(script);
+    }
+}   

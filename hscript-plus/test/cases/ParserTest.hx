@@ -14,9 +14,13 @@ class ParserTest {
 		parser = new Parser();
 	}
 
+	inline function getAst(script:String) {
+		return parser.parseString(script);
+	}
+
 	public function testClassName() {
 		var script = 'class Box {}';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 		
 		switch (parser.expr(ast)) {
 			case EClass(name, _, _):
@@ -28,7 +32,7 @@ class ParserTest {
 
 	public function testBaseClassName() {
 		var script = 'class Box extends Cardboard {}';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 		
 		switch (parser.expr(ast)) {
 			case EClass(_, _, baseClass):
@@ -44,7 +48,7 @@ class ParserTest {
 
 			function new(this) {}
 		}';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 		
 		switch (parser.expr(ast)) {
 			case EClass(_, e, _):
@@ -59,7 +63,7 @@ class ParserTest {
 
 	public function testAccessModifiers() {
 		var script = 'public static function main() {}';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 		
 		switch (parser.expr(ast)) {
 			case EFunction(_, _, _, _, access):
@@ -70,7 +74,7 @@ class ParserTest {
 
 	public function testPackage() {
 		var script = 'package test;';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 		
 		switch (parser.expr(ast)) {
 			case EPackage(path):
@@ -85,7 +89,7 @@ class ParserTest {
 		import ${packages[0]};
 		import ${packages[1]};
 		';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 
 		switch (parser.expr(ast)) {
 			case EBlock(exprList):
@@ -104,7 +108,7 @@ class ParserTest {
 
 	public function testEmptyPackageName() {
 		var script = 'package;';
-		var ast = parser.parseString(script);
+		var ast = getAst(script);
 
 		switch (parser.expr(ast)) {
 			case EPackage(path):
@@ -112,5 +116,13 @@ class ParserTest {
 			default:
 				Assert.fail();
 		}
+	}
+
+	public function testStringInterpolation() {
+		var script = //" 'This is $projectName ${lastVersion + 1}' ";
+		"var s = 'This is ' + projectName + ' version ' + 'lastVersion + 1'; ";
+
+		var ast = getAst(script);
+		Assert.pass();
 	}
 }
