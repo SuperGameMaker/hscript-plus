@@ -18,10 +18,18 @@ class ClassUtil {
 				Reflect.callMethod(_this, field, [_this].concat(args));
 				continue;
 			}
-			
-			var boundMethod = // bind `_this` to method
-			function(?args:Array<Dynamic>) return Reflect.callMethod(_this, field, [_this].concat(args));
-			Reflect.setField(_this, fieldName, Reflect.makeVarArgs(boundMethod));
+
+			function method(?args:Array<Dynamic>) {
+				try {
+					return Reflect.callMethod(_this, field, [_this].concat(args));
+				}
+				catch (e:Dynamic) {
+					trace('Called from $fieldName: $e');
+					return;
+				}
+			}
+
+			Reflect.setField(_this, fieldName, Reflect.makeVarArgs(method));
 		}
 		
 		return _this;
