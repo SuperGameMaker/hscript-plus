@@ -36,6 +36,8 @@ class Parser extends hscript.Parser {
 		if (ret != null) {
 			switch (expr(ret)) {
 				case EVar(name, t, e, access):
+					// if `e` is `null` then default it to "null"
+					if (e == null) e = mk(EConst(CString("null")));
 					ret = mk(EVar(name, t, e, access));
 				case EFunction(args, e, name, r, a):
 					ret = mk(EFunction(args, e, name, r, access));

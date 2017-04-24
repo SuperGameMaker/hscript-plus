@@ -56,8 +56,6 @@ class Interp extends hscript.Interp {
 					args.unshift({ name:"this" });
 				setExprToField(cls, name, e, access);
 			case EVar(name, _, e, access):
-				// if `e` is `null` then default it to "null"
-				if (e == null) e = EConst(CString("null"));
 				setExprToField(cls, name, e, access);
 			default:
 		}
