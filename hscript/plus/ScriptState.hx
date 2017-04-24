@@ -1,5 +1,7 @@
 package hscript.plus;
 
+import haxe.CallStack;
+
 import hscript.Expr;
 import hscript.plus.Parser;
 import hscript.plus.Interp;
@@ -43,16 +45,32 @@ class ScriptState {
 		return execute(script);
 	}
 
-	function execute(script:String, ?path:String = "") {
-		this.ast = parseScript(script);
+	function execute(script:String, ?path:String = ""):Dynamic {
+		try {
+			this.ast = parseScript(script);
+		}
+		catch (e:Dynamic) {
+			#if hscriptPos
+			trace('$path:${e.line}: characters ${e.pmin} - ${e.pmax}: $e');
+			#else
+			trace(e);
+			#end
+			return {};
+		}
 		return executeProgram(this.ast);
 	}
 	
 	function executeProgram(ast:Expr) {
-		_interp.execute(ast);
-		var main = get("main");
-		if (main != null && Reflect.isFunction(main))
-			main();
+		try {
+			_interp.execute(ast);
+			var main = get("main");
+			if (main != null && Reflect.isFunction(main))
+				return main();	
+		}
+		catch (e:Dynamic) {
+			trace(e + CallStack.toString(CallStack.exceptionStack()));
+		}
+		return null;
 	}
 	
 	function parseScript(script:String):Null<Expr> {
