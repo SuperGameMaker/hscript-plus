@@ -14,8 +14,8 @@ class ScriptState {
 
 	public var ast:Expr;
 
-	var _parser:hscript.plus.Parser;
-	var _interp:hscript.plus.Interp;
+	var _parser:Parser;
+	var _interp:Interp;
 
 	public function new() {
 		_parser = new Parser();
@@ -36,11 +36,11 @@ class ScriptState {
 		if (getFileContent == null)
 			throw "Provide a getFileContent function first!";
 		var script = getFileContent(path);
-		execute(script, path);
+		return execute(script, path);
 	}
 	
-	public inline function executeString(script:String) {
-		execute(script);
+	public inline function executeString(script:String):Dynamic {
+		return execute(script);
 	}
 
 	function execute(script:String, ?path:String = "") {
