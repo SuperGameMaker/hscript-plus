@@ -93,13 +93,56 @@ class Interp extends hscript.Interp {
 	}
 
 	override function resolve(id:String):Dynamic {
+		var val = resolveInThis(id);
+		
+		return
+		if (val != null)
+			val;
+		else super.resolve(id);
+	}
+	
+	function resolveInThis(id:String) {
 		var _this = locals.get("this");
+		var val = null;
+		
 		if (_this != null)
 			_this = _this.r;
 		
-		return
 		if (!locals.exists(id) && Reflect.hasField(_this, id))
-			Reflect.field(_this, id);
-		else super.resolve(id);
+			val = Reflect.field(_this, id);
+		
+		return val;
+	}
+	
+	override function assign(e1:Expr, e2:Expr):Dynamic {
+		var val = expr(e2);
+		var ID = null;
+		switch (edef(e1)) {
+			case EIdent(id) if (!locals.exists(id)):
+				var _this = locals.get("this");
+				if (_this != null) {
+					_this = _this.r;
+					Reflect.setField(_this, id, val);
+				}
+			default:
+				super.assign(e1, e2);
+		}
+		return val;
+	}
+	
+	override function evalAssignOp(op, fop, e1, e2):Dynamic {
+		var val = null;
+		switch (edef(e1)) {
+			case EIdent(id) if (!locals.exists(id)):
+				var _this = locals.get("this");
+				if (_this != null) {
+					_this = _this.r;
+					val = fop(expr(e1), expr(e2));
+					Reflect.setField(_this, id, val);
+				}
+			default:
+				val = super.evalAssignOp(op, fop, e1, e2);
+		}
+		return val;
 	}
 }
