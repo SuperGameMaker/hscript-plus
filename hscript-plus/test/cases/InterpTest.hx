@@ -166,7 +166,6 @@ class InterpTest {
 		var script = '
 		class SetGlobalField {
 			public function new() {
-				trace(this);
 				pass = true;
 			}
 		}
