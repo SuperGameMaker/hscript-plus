@@ -117,12 +117,4 @@ class ParserTest {
 				Assert.fail();
 		}
 	}
-
-	public function testStringInterpolation() {
-		var script = //" 'This is $projectName ${lastVersion + 1}' ";
-		"var s = 'This is ' + projectName + ' version ' + 'lastVersion + 1'; ";
-
-		var ast = getAst(script);
-		Assert.pass();
-	}
 }
