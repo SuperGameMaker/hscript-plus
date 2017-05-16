@@ -91,7 +91,7 @@ class InterpTest {
 		';
 		var ast = getAst(script);
 		set("Assert", Assert);
-		var Object = execute(ast);
+		execute(ast);
 
 		script = 'new Object();';
 		ast = getAst(script);
