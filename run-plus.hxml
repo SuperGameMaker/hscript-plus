@@ -3,6 +3,5 @@
 -cp hscript-plus/test
 -lib utest
 -main TestAll
--D hscriptPos
 
 -cmd neko hscript-plus/bin/test.n

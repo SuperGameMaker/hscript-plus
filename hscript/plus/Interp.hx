@@ -15,6 +15,9 @@ class Interp extends hscript.Interp {
 	}
 
 	override public function expr(e:Expr):Dynamic {
+		e = Tools.map(e, accessThis);
+		e = Tools.map(e, accessSuper);
+
 		var ret = super.expr(e);
 		if (ret != null) return ret;
 
@@ -24,22 +27,17 @@ class Interp extends hscript.Interp {
 			case EImport(path):
 				importClass(path.join("."));
 			case EClass(name, e, baseClass):
-				var cls:Dynamic = null; // class
 				var baseClassObj = baseClass == null ? null : variables.get(baseClass);
-
-				if (baseClassObj == null)
-					cls = {};
-				else cls = ClassUtil.classExtends(baseClass);
-				cls.__statics = new Array<String>();
+				var cls = ClassUtil.createClass(name, baseClassObj, { __statics:new Array<String>() });
 
 				variables.set(name, cls);
 
 				switch (edef(e)) {
 					case EFunction(_, _), EVar(_):
-						processClassFields(cls, e);
+						addClassFields(cls, e);
 					case EBlock(exprList):
 						for (e in exprList)
-							processClassFields(cls, e);
+							addClassFields(cls, e);
 					default:
 				}
 			ret = cls;
@@ -47,18 +45,6 @@ class Interp extends hscript.Interp {
 		}
 
 		return ret;
-	}
-
-	function processClassFields(cls:Dynamic, e:Expr) {
-		switch (edef(e)) {
-			case EFunction(args, _, name, _, access):
-				if (!isStatic(access))
-					args.unshift({ name:"this" });
-				setExprToField(cls, name, e, access);
-			case EVar(name, _, e, access):
-				setExprToField(cls, name, e, access);
-			default:
-		}
 	}
 
 	// TODO: import anonymous structure class
@@ -72,7 +58,19 @@ class Interp extends hscript.Interp {
 		variables.set(className, cls);
 	}
 
-	function setExprToField(object:Dynamic, name:String, e:Expr, access:Array<Access>) {
+	function addClassFields(cls:Dynamic, e:Expr) {
+		switch (edef(e)) {
+			case EFunction(args, _, name, _, access):
+				if (!isStatic(access))
+					args.unshift({ name:"this" });
+				setClassField(cls, name, e, access);
+			case EVar(name, _, e, access):
+				setClassField(cls, name, e, access);
+			default:
+		}
+	}
+
+	function setClassField(object:Dynamic, name:String, e:Expr, access:Array<Access>) {
 		Reflect.setField(object, name, expr(e));
 		if (isStatic(access))
 			object.__statics.push(name);
@@ -107,42 +105,54 @@ class Interp extends hscript.Interp {
 		
 		if (_this != null)
 			_this = _this.r;
+		else return val;
 		
 		if (!locals.exists(id) && Reflect.hasField(_this, id))
 			val = Reflect.field(_this, id);
 		
 		return val;
 	}
-	
-	override function assign(e1:Expr, e2:Expr):Dynamic {
-		var val = expr(e2);
-		var ID = null;
-		switch (edef(e1)) {
-			case EIdent(id) if (!locals.exists(id)):
+
+	function accessThis(e:Expr) {
+		switch (edef(e)) {
+			case EIdent(id) if (!locals.exists(id) && !variables.exists(id)):
 				var _this = locals.get("this");
 				if (_this != null) {
 					_this = _this.r;
-					Reflect.setField(_this, id, val);
+					e = mk(EField(EIdent("this"), id));
 				}
 			default:
-				super.assign(e1, e2);
 		}
-		return val;
+		return e;
 	}
-	
-	override function evalAssignOp(op, fop, e1, e2):Dynamic {
-		var val = null;
-		switch (edef(e1)) {
-			case EIdent(id) if (!locals.exists(id)):
-				var _this = locals.get("this");
-				if (_this != null) {
-					_this = _this.r;
-					val = fop(expr(e1), expr(e2));
-					Reflect.setField(_this, id, val);
+
+	function accessSuper(e:Expr):Expr {
+		switch (edef(e)) {
+			case EField(ident, fieldName):
+				switch (ident) {
+					case EIdent(objectName):
+						var object = expr(ident);
+						if (superHasField(object, fieldName))
+							return mk(EField(EField(EIdent(objectName), "__super"), fieldName), e);
+					default:
 				}
 			default:
-				val = super.evalAssignOp(op, fop, e1, e2);
 		}
-		return val;
+		return e;
+	}
+
+	inline function mk(e, ?expr:Expr) : Expr {
+		#if hscriptPos
+		if( e == null ) return null;
+		return { e : e, pmin: expr.pmin, pmax: expr.pmax, line: expr.line, origin: expr.origin };
+		#else
+		return e;
+		#end
+	}
+
+	function superHasField(object:Dynamic, fieldName:String) {
+		return object != null 
+		&& ClassUtil.isStructure(object) 
+		&& object.__super != null && Reflect.hasField(object.__super, fieldName);
 	}
 }

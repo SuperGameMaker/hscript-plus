@@ -7,6 +7,7 @@ import cases.ClassUtilTest;
 import cases.ScriptStateTest;
 import cases.ParserTest;
 import cases.InterpTest;
+import cases.RealClassStructureTest;
 
 class TestAll {
 	public static function main() {
@@ -23,6 +24,7 @@ class TestAll {
 		runner.addCase(new ScriptStateTest());
 		runner.addCase(new ParserTest());
 		runner.addCase(new InterpTest());
+		runner.addCase(new RealClassStructureTest());
 	}
 	
 }

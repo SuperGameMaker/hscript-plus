@@ -97,7 +97,7 @@ There are 4 classes in `hscript-plus`
 - [ ] Try catch interpreting error
 - [ ] Hotswapping
 - [x] Call variables and functions calling `this`
-- [x] Filter out static fields in `ClassUtil.classExtends()`
+- [x] Filter out static fields in `ClassUtil.createClass()`
 
 ### **End of hscript-plus README**
 
