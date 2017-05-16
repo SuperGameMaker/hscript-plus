@@ -14,9 +14,9 @@ class ScriptStateTest {
 
     public function testReadmeUsageExample() {
         var script = "
-        class Object {
+        class TestObject {
             public static function main() {
-                var object = new Object(10, 10);
+                var object = new TestObject(10, 10);
                 object.name = NAME;
                 Assert.equals('Ball', object.name);
             }
@@ -33,10 +33,10 @@ class ScriptStateTest {
         state.set("Assert", Assert);
         state.set("NAME", "Ball"); // set a global variable
         state.executeString(script); // executes a String
-
+		
         // get a global variable
-        var Object = state.get("Object"); // get a global variable
-        Object.main();
+        var TestObject = state.get("TestObject"); // get a global variable
+        TestObject.main();
     }
 
     public function testClassCreated() {
@@ -57,17 +57,6 @@ class ScriptStateTest {
         Assert.equals(10, testObject.mass);
     }
 
-    public function testFunction() {
-		var script = '
-		class Object {
-			public static function main()
-				Assert.pass();
-		}
-		';
-		state.set("Assert", Assert);
-		state.executeString(script);
-	}
-
     public function testExecuteFile_Import() {
         state.executeFile("hscript-plus/test/scripts/ExecuteFile_Import.hx");
     }
@@ -83,5 +72,11 @@ class ScriptStateTest {
         }
         ";
         state.executeString(script);
+    }
+
+    public function parserErrorHandling() {
+        var script = "class {}";
+        state.executeString(script);
+        Assert.pass();
     }
 }   

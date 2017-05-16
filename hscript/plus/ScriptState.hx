@@ -6,15 +6,12 @@ import hscript.Expr;
 import hscript.plus.Parser;
 import hscript.plus.Interp;
 
-using StringTools;
-
 class ScriptState {
-	public static var CLASS_NAME = Type.getClassName(ScriptState).split(".")[1];
-	
 	public var variables(get, null):Map<String, Dynamic>; function get_variables() return _interp.variables;
 	public var getFileContent:String->String #if !flash = sys.io.File.getContent #end; 
 
 	public var ast:Expr;
+	public var path:String;
 
 	var _parser:Parser;
 	var _interp:Interp;
@@ -37,27 +34,18 @@ class ScriptState {
 	public function executeFile(path:String) {
 		if (getFileContent == null)
 			throw "Provide a getFileContent function first!";
+		this.path = path;
 		var script = getFileContent(path);
-		return execute(script, path);
+		return execute(script);
 	}
 	
 	public inline function executeString(script:String):Dynamic {
 		return execute(script);
 	}
 
-	function execute(script:String, ?path:String = ""):Dynamic {
-		try {
-			this.ast = parseScript(script);
-		}
-		catch (e:Dynamic) {
-			#if hscriptPos
-			trace('$path:${e.line}: characters ${e.pmin} - ${e.pmax}: $e');
-			#else
-			trace(e);
-			#end
-			return {};
-		}
-		return executeProgram(this.ast);
+	function execute(script:String):Dynamic {
+		ast = parseScript(script);
+		return executeProgram(ast);
 	}
 	
 	function executeProgram(ast:Expr) {
@@ -68,12 +56,23 @@ class ScriptState {
 				return main();	
 		}
 		catch (e:Dynamic) {
+			trace(ast);
 			trace(e + CallStack.toString(CallStack.exceptionStack()));
 		}
 		return null;
 	}
 	
 	function parseScript(script:String):Null<Expr> {
-		return _parser.parseString(script);
+		try {
+			return _parser.parseString(script, path);
+		}
+		catch (e:Dynamic) {
+			#if hscriptPos 
+			trace('$path:${e.line}: characters ${e.pmin} - ${e.pmax}: $e'); 
+			#else 
+			trace(e); 
+			#end 
+			return null;
+		}
 	}
 }
