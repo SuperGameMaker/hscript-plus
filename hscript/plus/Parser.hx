@@ -17,6 +17,7 @@ class Parser extends hscript.Parser {
 
 		return switch (expr(e)) {
 			case EPackage(_), EImport(_): true;
+			case EClass(_, e, _): isBlock(e);
 			default: false;
 		}
 	}

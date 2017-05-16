@@ -177,4 +177,12 @@ class InterpTest {
 		Assert.isTrue(testObject.pass);
 	}
 
+	public function testMultipleClass() {
+		var script = '
+		class Entity {}
+		class Player {}';
+
+		execute(getAst(script));
+		Assert.pass();
+	}
 }
